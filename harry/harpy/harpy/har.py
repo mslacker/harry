@@ -11,7 +11,7 @@ class Har(object):
             if not os.path.isfile(f):
                 raise IOError("%s does not exist." % f)
 
-            fp = open(f, 'r')
+            fp = open(f, 'r', encoding='UTF-8')
             self._raw = json.load(fp)
             fp.close()
         else:

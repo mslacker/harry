@@ -30,6 +30,7 @@ Options:
 
 """
 
+from __future__ import print_function
 
 from docopt import docopt
 from harpy.harpy.har import Har
@@ -40,7 +41,7 @@ ENV = Environment(loader=PackageLoader('harry', 'templates'))
 
 def _verbose_print(message):
     """Write message to STDOUT."""
-    print message
+    print(message)
 
 
 def generate_test_plan(har, output='test_plan.jmx'):
@@ -52,16 +53,16 @@ def generate_test_plan(har, output='test_plan.jmx'):
         formatted_pages.append(generate_page(page.id, entries))
     generated_test = test_plan_template.render(pages=formatted_pages)
     # format test
-    formatted_xml = xml.dom.minidom.parseString(xml_fname) 
-    pretty_xml = xml.toprettyxml()
+    formatted_xml = xml.dom.minidom.parseString(generated_test)
+    pretty_xml = formatted_xml.toprettyxml()
     try:
         output_file = open(output, 'w')
         output_file.write(pretty_xml)
     except IOError:
-        print 'ERROR:'
-        print 'do not have permission to write to file.'
+        print('ERROR:')
+        print('do not have permission to write to file.')
     else:
-        print 'file created at ' + output
+        print('file created at ' + output)
 
 
 def generate_page(page_ref, entries):
@@ -138,22 +139,22 @@ def main():
             har = Har(input_file)
         except IOError:
             # Python couldn't find the file
-            print 'ERROR:'
-            print input_file + ' is not a valid file'
-        except ValueError:
+            print('ERROR:')
+            print(input_file + ' is not a valid file')
+        except ValueError as e:
             # File is not a JSON file
-            print 'ERROR:'
-            print input_file + ' is not a JSON file'
+            print('ERROR:', e)
+            print(input_file + ' is not a JSON file')
         except KeyError as missing_key:
             # File does not conform to HTTP Archive specifications
-            print 'ERROR:'
-            print input_file + ' does not conform to the HTTP Archive standard'
-            print 'Expected the following key: ' + str(missing_key).strip('\'')
+            print('ERROR:')
+            print(input_file + ' does not conform to the HTTP Archive standard')
+            print('Expected the following key: ' + str(missing_key).strip('\''))
         if har is not None:
             output_file = 'test_plan.jmx'
             generate_test_plan(har, output_file)
     else:
-        print __doc__
+        print(__doc__)
 
 
 if __name__ == '__main__':
